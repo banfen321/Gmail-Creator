@@ -5,3 +5,4 @@ requests
 selenium
 selenium_wire
 webdriver_manager
+python-dotenv

@@ -1,0 +1,12 @@
+# Environment variables
+.env
+
+# Created accounts
+Created.txt
+
+# User data
+user.csv
+
+# Python cache
+__pycache__/
+*.pyc

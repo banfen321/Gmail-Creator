@@ -19,6 +19,10 @@ import csv
 import string
 from fp.fp import FreeProxy
 from fake_useragent import UserAgent
+from config import API_KEY, SOCKS_PROXY
+
+if API_KEY == "your_default_api_key":
+    raise ValueError("Please set your API_KEY in a .env file")
 
 # Option for Auto User info generation
 AUTO_GENERATE_UERINFO = True
@@ -33,15 +37,13 @@ WAIT = 4
 # Max Retry to get phone number from sms-activate.org
 REQUEST_MAX_TRY = 10
 
-# Your SMS-Activate API key
-API_KEY = "8e49fdB90d0209c085dd1df56cedf00e" #9b6b9eb50d0A30---------d9b7495b
 COUNTRY_CODE = "175" #i.e, Austrailian country code, See country table in sms-activate. I often use Australian phone number and it works almost always.
 
 sms_activate_url = "https://sms-activate.org/stubs/handler_api.php"
 phone_request_params = {
     "api_key":API_KEY,
     "action":"getNumber",
-    "country":COUNTRY_CODE, 
+    "country":COUNTRY_CODE,
     "service":"go",
 }
 
@@ -57,7 +59,7 @@ SELECTORS = {
         ],
     'for_my_personal_use':[
         "//span[@class='VfPpkd-StrnGf-rymPhb-b9t22c']",
-        ], 
+        ],
     "first_name":"//*[@name='firstName']",
     "last_name":"//*[@name='lastName']",
     "username":"//*[@name='Username']",
@@ -157,7 +159,7 @@ def getRandomeUserAgent():
         'Mozilla/5.0 (X11; CrOS x86_64 14588.51.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.32 Safari/537.36',
         'Mozilla/5.0 (X11; CrOS x86_64 14526.89.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.133 Safari/537.36',
         'Mozilla/5.0 (X11; CrOS x86_64 14588.92.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.56 Safari/537.36',
-        'Mozilla/5.0 (X11; CrOS x86_64 14526.43.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.54 Safari/537.36',
+        'Mozilla/5.g (X11; CrOS x86_64 14526.43.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.54 Safari/537.36',
         'Mozilla/5.0 (X11; CrOS x86_64 14505.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4870.0 Safari/537.36',
         'Mozilla/5.0 (X11; CrOS x86_64 14526.16.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.25 Safari/537.36',
         'Mozilla/5.0 (X11; CrOS x86_64 14526.28.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.44 Safari/537.36',
@@ -182,7 +184,7 @@ def setDriver():
 
     # Set Proxy
     # proxy = getProxy() # Rotating proxy
-    SOCKS_PROXY = "socks5://14ab1e7131541:39d813de77@198.143.22.234:12324" # Fixed proxy, i.e socks5://14ab1e7131541:39d813de77@176.103.246.143:12324
+    # SOCKS_PROXY = "socks5://14ab1e7131541:39d813de77@198.143.22.234:12324" # Fixed proxy, i.e socks5://14ab1e7131541:39d813de77@176.103.246.143:12324
     # SOCKS_PROXY = "socks5://user:pass@ip:port" # Fixed proxy, i.e socks5://14ab1e7131541:39d813de77@176.103.246.143:12324
     # SOCKS_PROXY = 'socks5://158.69.225.110:59166'
 
@@ -209,8 +211,9 @@ def setDriver():
     # proxy_options['https'] = HTTPS_PROXY
 
     ## Socks proxy
-    proxy_options['http'] = SOCKS_PROXY
-    proxy_options['https'] = SOCKS_PROXY
+    if SOCKS_PROXY:
+        proxy_options['http'] = SOCKS_PROXY
+        proxy_options['https'] = SOCKS_PROXY
 
     seleniumwire_options['proxy'] = proxy_options
     # prox = Proxy()
@@ -255,7 +258,7 @@ def setDriver():
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options = options, seleniumwire_options=seleniumwire_options)
     #driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), options = options, seleniumwire_options=seleniumwire_options)
-    
+
     return driver
 
 def main():
@@ -282,20 +285,20 @@ def main():
             print('################ Please check if Last_Name_DB.csv exists ################')
             quit()
     else:
-        print('################ Open User.csv ################')
+        print('################ Open user.csv ################')
         try:
-            user_info_file = open("User.csv", 'r')
+            user_info_file = open("user.csv", 'r')
             user_infos = csv.reader(user_info_file)
             user_infos = list(user_infos)
             user_number = len(user_infos)
         except:
-            print('################ Please check if User.csv exists ################')
+            print('################ Please check if user.csv exists ################')
             quit()
 
     while True:
         try:
             # Check if the count reach to the maxium users.
-            
+
             if i == user_number:
                 break
 
@@ -344,7 +347,7 @@ def main():
                 driver.get("https://accounts.google.com")
 
                 time.sleep(WAIT)
-                
+
                 print('################ Click "Create account" ################')
                 for selector in SELECTORS["create_account"]:
                     try:
@@ -363,7 +366,7 @@ def main():
             elif random_int == 3:
                 driver.get('https://accounts.google.com/signup/v2/webcreateaccount?flowName=GlifWebSignIn&flowEntry=SignUp')
                 time.sleep(WAIT)
-            
+
             elif random_int == 4:
                 driver.get('https://support.google.com/mail/answer/56256?hl=en')
                 WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH,'//*[@id="hcfe-content"]/section/div/div[1]/article/section/div/div[1]/div/p[1]/a'))).click()
@@ -405,9 +408,9 @@ def main():
 
                 print('################ 2st step of Creation Wizard. ################')
                 print('################ Birthday & Gender ################')
-                # Date   
+                # Date
                 WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['acc_day']))).send_keys(birthday.split('/')[1])
-                
+
                 # Month
                 select_acc_month = WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['acc_month'])))
 
@@ -525,7 +528,7 @@ def main():
                     if "ACCESS_NUMBER" in data:
                         activationId = data.split(':')[1]
                         number = data.split(':')[2]
-                        
+
                         number = '+'+ number
                         print(number)
                         break
@@ -537,7 +540,7 @@ def main():
                 if number == '':
                     print("################ Cannot get phone number: ", REQUEST_MAX_TRY, " times retrial. ################")
                     raise Exception("Go to next account.")
-                
+
                 phone_number_input.send_keys(number)
 
                 #click next button
@@ -572,7 +575,7 @@ def main():
                     print('Cannot receive code from sms_activate: ',REQUEST_MAX_TRY, " times retrial")
                     raise Exception("Go to next account.")
 
-                print('################ Verify Phone Code ################')  
+                print('################ Verify Phone Code ################')
                 WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['code']))).send_keys(code)
 
                 #click next button
@@ -589,9 +592,9 @@ def main():
             # WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['acc_phone_number']))).clear()
 
             # print('################ Account Birthday ################')
-            # # Date   
+            # # Date
             # WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['acc_day']))).send_keys(birthday.split('/')[1])
-            
+
             # # Month
             # select_acc_month = WebDriverWait(driver, WAIT).until(EC.presence_of_element_located((By.XPATH, SELECTORS['acc_month'])))
 
@@ -618,7 +621,7 @@ def main():
             time.sleep(WAIT)
 
             # Scroll to click "I agree"
-            driver.execute_script("window.scrollTo(0, 800)") 
+            driver.execute_script("window.scrollTo(0, 800)")
             time.sleep(WAIT)
             for selector in SELECTORS['next']:
                 try:
