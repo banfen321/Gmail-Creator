@@ -25,10 +25,12 @@ Also, Feel free to contact me if you have any project regarding Automation, Scra
 
 ## Usage
 1. Install Python 3.x.
-2. ```pip install -r requirements.txt``` 
-3. ```python app.py```
-4. 'Created.txt' will be generated for successful creation.
-5. if you already installed python packages for my previous script, I recommend to upgrade the ```webdriver-manager``` package by ```pip install webdriver-manager -U```
+2. Create a `.env` file by copying the example: `cp .env.example .env`
+3. Edit the `.env` file to add your `API_KEY` and `SOCKS_PROXY` (optional).
+4. ```pip install -r requirements.txt```
+5. ```python app.py```
+6. 'Created.txt' will be generated for successful creation.
+7. if you already installed python packages for my previous script, I recommend to upgrade the ```webdriver-manager``` package by ```pip install webdriver-manager -U```
 
 ## Customize
 ### Browser [ Chrome, Firefox ]
@@ -43,7 +45,7 @@ driver = webdriver.Firefox(service=Service(GeckoDriverManager().install()), opti
 
 ```
 ### Manual or Automatic User info generation
-You edit the 'User.csv' with given type such as First name, Last name, Password, Birthday, Username(optional) from the second line.
+You edit the 'user.csv' with given type such as First name, Last name, Password, Birthday, Username(optional) from the second line.
 If the 5th parameter on user.csv is not passed by userBot generates username automatically adding FN + dot + LN + random 5 digits.(john.doe12345@gmail.com)
 Thanks to [BourneXu](https://github.com/BourneXu/AutoCreateGmailAccount), Script generates random popular usernames.
 You can set this variant as "True" to use this functionality to automate generation.
@@ -51,10 +53,11 @@ You can set this variant as "True" to use this functionality to automate generat
 AUTO_GENERATE_UERINFO = True
 ```
 ### Proxy
-If you want to use socks proxy, please remove comment theses lines.
-[Free Proxy list](http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all/2) is here
+You can configure a SOCKS5 proxy by setting the `SOCKS_PROXY` variable in your `.env` file.
+
+Example:
 ```
-    SOCKS_PROXY = "socks5://user:pass@ip:port"
+SOCKS_PROXY=socks5://user:pass@ip:port
 ```
 
 ### Headless or With UI (Optional)
